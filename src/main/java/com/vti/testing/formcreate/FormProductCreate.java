@@ -1,4 +1,4 @@
-package com.vti.testing.createform;
+package com.vti.testing.formcreate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

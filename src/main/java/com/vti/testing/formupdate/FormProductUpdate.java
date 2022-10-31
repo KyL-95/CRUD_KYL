@@ -1,4 +1,4 @@
-package com.vti.testing.updateform;
+package com.vti.testing.formupdate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
