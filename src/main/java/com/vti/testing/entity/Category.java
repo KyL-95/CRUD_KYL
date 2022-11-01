@@ -3,6 +3,7 @@ package com.vti.testing.entity;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class Category implements Serializable {
 	private int categoryId;
 	@Column(nullable = false, unique = true )
 	private String categoryName;
-	@OneToMany(mappedBy = "category")
+	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL) 
 	private Set<Product> products;
 
 	public Category(int categoryId, String categoryName, Set<Product> products) {

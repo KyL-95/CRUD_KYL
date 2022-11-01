@@ -2,9 +2,9 @@ package com.vti.testing.service;
 
 import java.util.List;
 
-import com.vti.testing.createform.FormProductCreate;
 import com.vti.testing.dto.ProductDTO;
-import com.vti.testing.updateform.FormProductUpdate;
+import com.vti.testing.formcreate.FormProductCreate;
+import com.vti.testing.formupdate.FormProductUpdate;
 
 import org.springframework.http.ResponseEntity;
 

@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.vti.testing.createform.FormProductCreate;
 import com.vti.testing.dto.ProductDTO;
 import com.vti.testing.entity.Category;
 import com.vti.testing.entity.Product;
+import com.vti.testing.exception.custom_exception.AlreadyExistEx;
+import com.vti.testing.exception.custom_exception.CategoryIdInvalidEx;
+import com.vti.testing.exception.custom_exception.CategoryNameInvalidEx;
+import com.vti.testing.exception.custom_exception.NotFoundEx;
+import com.vti.testing.formcreate.FormProductCreate;
+import com.vti.testing.formupdate.FormProductUpdate;
 import com.vti.testing.repository.IProductRepository;
 import com.vti.testing.responseobj.ResponseObj;
-import com.vti.testing.updateform.FormProductUpdate;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -48,8 +52,7 @@ public class ProductService implements IProductService {
 			return ResponseEntity.ok(new ResponseObj("Ok", "Get a product successfully", dto));
 
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body(new ResponseObj("Not found", "Can't find a product with id = " + productId, ""));
+		throw new NotFoundEx("Can't find a product with id = " + productId);
 
 	}
 
@@ -57,63 +60,61 @@ public class ProductService implements IProductService {
 	public ResponseEntity<?> updateProduct(int productId, FormProductUpdate form) {
 		// Check exists by id
 		if (productRepository.existsById(productId) == false) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ResponseObj("Not found", "Can't find a product with id = " + productId, ""));
+			throw new NotFoundEx("Can't find a product to update with id = " + productId);
+
 		}
 		Product proUpdate = productRepository.findById(productId).get();
 		// Check product name is used???
 		if (productRepository.existsByProductName(form.getProductName().trim())) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-					.body(new ResponseObj("Alredy exists", "This name : " + form.getProductName() + " is used", ""));
+			throw new AlreadyExistEx("This name : " + form.getProductName() + " is used");
+
 		}
-		
+
 		// Validate category id
-		if(form.getCategoryId() != 1 && form.getCategoryId() != 2) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-					.body(new ResponseObj("invalid", "Category Id value is only 1 or 2 ", ""));
-
-		} //------
-
+		if (form.getCategoryId() != 1 && form.getCategoryId() != 2) {
+			throw new CategoryIdInvalidEx("Category Id value is only 1 or 2 ");
+		} // ------
 		proUpdate.setProductName(form.getProductName());
 		proUpdate.setProductPrice(form.getProductPrice());
 		proUpdate.setCategory(new Category(form.getCategoryId(), form.getCategoryName()));
 		productRepository.save(proUpdate);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ResponseObj("", "Update is Successfully", ""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj("", "Update is Successfully", ""));
 	}
 
 	@Override
 	public ResponseEntity<?> createProduct(FormProductCreate form) {
 		// Check productName user nhập đã tồn tại chưa?
-				if (productRepository.existsByProductName(form.getProductName().trim())) {
-					return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-							.body(new ResponseObj("Alredy exists", "This name : " + form.getProductName() + " is used", ""));
+		if (productRepository.existsByProductName(form.getProductName().trim())) {
+			throw new AlreadyExistEx("This name : " + form.getProductName() + " is used");
 
-				} 
+		}
 		// Validate category id
-		if(form.getCategoryId() != 1 && form.getCategoryId() != 2) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-					.body(new ResponseObj("invalid", "Category Id value is only 1 or 2 ", ""));
+		if (form.getCategoryId() != 1 && form.getCategoryId() != 2) {
+			throw new CategoryIdInvalidEx("Category Id value is only 1 or 2 ");
 
-		} //Convert createform -> entity
+		}
+		// Validate category name
+		if((form.getCategoryId() == 1 && !form.getCategoryName().equals("apple")) || 
+			form.getCategoryId() == 2 && !form.getCategoryName().equals("samsung"))	 {
+			 throw new CategoryNameInvalidEx("Can't map categoryId to categoryName");
+		}
+		// Convert createform -> entity
 		Category newCategory = new Category(form.getCategoryId(), form.getCategoryName());
-		Product newProduct = new Product( form.getProductName(), form.getProductPrice(),newCategory);
+		Product newProduct = new Product(form.getProductName(), form.getProductPrice(), newCategory);
 		productRepository.save(newProduct);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ResponseObj("", "Create is Successfully", ""));
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj("", "Create is Successfully", ""));
 	}
 
 	@Override
 	public ResponseEntity<?> deleteProduct(int productId) {
 		// Check exists by id
 		if (productRepository.existsById(productId) == false) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ResponseObj("Not found", "Product is not exists to delete with id = " + productId, ""));
+			throw new NotFoundEx("Can't find a product to update with id = " + productId);
+
 		}
 		productRepository.deleteById(productId);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ResponseObj("", "Delete is Successfully", ""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseObj("", "Delete is Successfully", ""));
 	}
 
 }

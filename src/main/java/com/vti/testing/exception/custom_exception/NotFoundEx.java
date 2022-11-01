@@ -1,4 +1,4 @@
-package com.vti.testing.exception.customexception;
+package com.vti.testing.exception.custom_exception;
 
 public class NotFoundEx extends RuntimeException {
 

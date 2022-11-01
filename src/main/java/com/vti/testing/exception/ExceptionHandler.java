@@ -1,39 +1,54 @@
 package com.vti.testing.exception;
 
-import java.util.NoSuchElementException;
+import com.vti.testing.exception.custom_exception.AlreadyExistEx;
+import com.vti.testing.exception.custom_exception.CategoryIdInvalidEx;
+import com.vti.testing.exception.custom_exception.CategoryNameInvalidEx;
+import com.vti.testing.exception.custom_exception.NotFoundEx;
 
-import com.vti.testing.exception.customexception.AlreadyExistEx;
-import com.vti.testing.exception.customexception.NotFoundEx;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionHandler {
 
 	@org.springframework.web.bind.annotation.ExceptionHandler
-	public ExceptionResponse noSuchElement(NoSuchElementException e) {
-		return new ExceptionResponse("", "This product is not exist") ;
-		
+	public ResponseEntity<?> notFoundException(NotFoundEx e) {
+		 return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ExceptionResponse("Error - 401", e.getMessage()));
+
 	}
-				
-	@org.springframework.web.bind.annotation.ExceptionHandler
-	public ExceptionResponse exception(Exception e) {
-		return new ExceptionResponse("An error occurred", e.getMessage()) ;
-		
-	}
-	
-	@org.springframework.web.bind.annotation.ExceptionHandler
-	public ExceptionResponse notFoundException(NotFoundEx e) {
-		return new ExceptionResponse("Not Found !", e.getMessage()) ;
-		
-	}
-	
+
 	@org.springframework.web.bind.annotation.ExceptionHandler
 	public ExceptionResponse alreadyExistException(AlreadyExistEx e) {
-		return new ExceptionResponse("Already exist !", e.getMessage()) ;
-		
+		return new ExceptionResponse("Already exist !", e.getMessage());
+
+	}
+
+	@org.springframework.web.bind.annotation.ExceptionHandler
+	public ExceptionResponse categoryIdInvalidEx(CategoryIdInvalidEx e) {
+		return new ExceptionResponse("Invalid id ! ", e.getMessage());
+
 	}
 	
+	@org.springframework.web.bind.annotation.ExceptionHandler
+	public ExceptionResponse categoryNameInvalidEx(CategoryNameInvalidEx e) {
+		return new ExceptionResponse("Invalid name ! ", e.getMessage());
+
+	}
 	
-	
+	@org.springframework.web.bind.annotation.ExceptionHandler
+	public ResponseEntity<?> accessDeniedExceptionException(AccessDeniedException e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(new ExceptionResponse("Error - 403", e.getMessage()));
+			
+	}
+
+	@org.springframework.web.bind.annotation.ExceptionHandler
+	public ExceptionResponse exception(Exception e) {
+		return new ExceptionResponse("An error occurred", e.getMessage());
+			
+	}
+
 }
