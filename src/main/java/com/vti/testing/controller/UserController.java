@@ -3,6 +3,7 @@ package com.vti.testing.controller;
 import java.security.Principal;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,13 +22,14 @@ import com.vti.testing.responseobj.ResponseObj;
 import com.vti.testing.service.IUserService;
 
 @RestController
-//@RequestMapping("/api/v1/user")
 public class UserController {
 	@Autowired
 	private IUserService userService;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@GetMapping("/getAll")
 //	@PreAuthorize("hasAnyRole('MANAGER')")
  	@IsManager  // == dòng 34
@@ -35,10 +37,15 @@ public class UserController {
 		return userService.getAllUsers();
 	}
 
+	@PostMapping("/user-login")
+	public String login() {
+		return "Login success";
+	}
 
 	@GetMapping("/logining-user")	// Lấy thông tin user đang login : Dùng principal
 //	@PreAuthorize("hasAnyRole('ADMIN')")  // Admin mới đc gọi API này
 	public User loginInfor(Principal principal) {
+		System.out.println(principal.getName());
 		return userService.getByUserName(principal.getName());
 
 	}
