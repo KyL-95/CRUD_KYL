@@ -28,7 +28,7 @@ public class CustomUserDetails implements UserDetails {
 		// List ROLE của user(1 user có thể có nhiều role nên mặc định sẽ là list)
 		List<SimpleGrantedAuthority> auth = new ArrayList<>();
 		// Get role user -> add to List
-		auth.add(new SimpleGrantedAuthority(user.getRole()));
+		auth.add(new SimpleGrantedAuthority(user.getRoles().toString()));
 		return auth;
 	}
 

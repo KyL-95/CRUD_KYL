@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vti.testing.author_anotations.IsUser;
+import com.vti.testing.author_anotations.IsManager;
 import com.vti.testing.dto.ProductDTO;
 import com.vti.testing.formcreate.FormProductCreate;
 import com.vti.testing.formupdate.FormProductUpdate;
@@ -30,7 +30,7 @@ public class ProductController {
 
 
 	@GetMapping("/getAll")
-	@IsUser
+	@IsManager
 	public List<ProductDTO> getAllProducts() {
 		dtos = productService.getAllProducts();
 		return dtos;

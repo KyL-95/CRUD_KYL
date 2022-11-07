@@ -9,13 +9,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.vti.testing.exception.AuthExceptionHandler;
 import com.vti.testing.filter.CustomAuthenFilter;
 import com.vti.testing.filter.CustomAuthorFilter;
-import com.vti.testing.service.UserDetails;
+import com.vti.testing.service.UserDetailsResult;
 
 @Configuration
 @EnableWebSecurity
@@ -27,48 +28,38 @@ import com.vti.testing.service.UserDetails;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	private UserDetails userDetails;
-	
-	// Tạo authExceptionHandler để bắt exception
+	private UserDetailsResult userDetails;
 	@Autowired
 	private AuthExceptionHandler authExceptionHandler;
-	
-	
-	// Phân quyền
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetails) // Cung cấp userDetailsService cho spring security
 		.passwordEncoder(new BCryptPasswordEncoder());  // Dùng BCrypt để encode passWord 
-		
 	}
-	
 	// Login 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		// Custom lại AIP login
 		UsernamePasswordAuthenticationFilter authenticationFilter = 
 				new CustomAuthenFilter(authenticationManagerBean());
-		// Custom lại AIP login
-		authenticationFilter.setFilterProcessesUrl("/user-login");
-		// Khi không đủ quyền truy cập sẽ bị chuyển hướng
-//        http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/error");
-		http.cors()
-		.and()
-		// Xử lý khi xuất hiện lỗi 401 / 403
-		.exceptionHandling()
+		authenticationFilter.setFilterProcessesUrl("/login-abc");
+		http
+		.cors()
+		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.
+		  STATELESS) .and() // Xử lý khi xuất hiện lỗi 401 / 403 
+		  .exceptionHandling()
 		// Lỗi 401
-		.authenticationEntryPoint(authExceptionHandler) 
+//		.authenticationEntryPoint(authExceptionHandler)
 		// Lỗi 403
-		.accessDeniedHandler(authExceptionHandler)
+//		.accessDeniedHandler(authExceptionHandler)
 		.and()
 		.authorizeRequests()
-			.antMatchers("/user-login").permitAll()
-			.anyRequest().authenticated()
-			// Cho phép logout 
-			.and().logout().permitAll()
-			.and().httpBasic().and().csrf().disable()
-			.addFilter(authenticationFilter);
+			.antMatchers("/updatePassWord/**","/api/v1/product/getAll","/login-abc").permitAll()
+//			.antMatchers("/getAll").hasAnyRole("MANAGER")
+//			.anyRequest().authenticated()
+			.and().csrf().disable();
+//			.addFilter(new CustomAuthenFilter(authenticationManagerBean()))
 //			.addFilterBefore(new CustomAuthorFilter(),UsernamePasswordAuthenticationFilter.class);
-		
 	}
 	
 	@Bean

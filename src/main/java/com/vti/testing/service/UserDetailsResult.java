@@ -9,7 +9,7 @@ import com.vti.testing.entity.User;
 import com.vti.testing.repository.IUserRepository;
 
 @Component
-public class UserDetails implements UserDetailsService{
+public class UserDetailsResult implements UserDetailsService{
 	@Autowired
 	private IUserRepository userRepository;
 

@@ -1,13 +1,10 @@
 package com.vti.testing.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.Getter;
@@ -27,14 +24,13 @@ public class User implements Serializable {
 	private String userName;
 	private String passWord;
 	private String active;
-	@Column(name = "role")
-	private String role;
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinTable(
+			name = "user_role",
+			joinColumns = { @JoinColumn(name = "userId") },
+			inverseJoinColumns = { @JoinColumn(name = "roleId") }
+	)
+	List<Role> roles = new ArrayList<>();
 
-	public User(String userName, String passWord, String active, String role) {
-		this.userName = userName;
-		this.passWord = passWord;
-		this.active = active;
-		this.role = role;
-	}
 
 }
