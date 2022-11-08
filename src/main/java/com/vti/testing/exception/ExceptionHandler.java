@@ -1,10 +1,8 @@
 	package com.vti.testing.exception;
 
-import com.vti.testing.exception.custom_exception.AlreadyExistEx;
-import com.vti.testing.exception.custom_exception.CategoryIdInvalidEx;
-import com.vti.testing.exception.custom_exception.CategoryNameInvalidEx;
-import com.vti.testing.exception.custom_exception.NotFoundEx;
+import com.vti.testing.exception.custom_exception.*;
 
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,6 +36,12 @@ public class ExceptionHandler {
 	public ExceptionResponse exception(Exception e) {
 		return new ExceptionResponse("An error occurred", e.getMessage());
 			
+	}
+
+	// --------- JWT exception -----------
+	@org.springframework.web.bind.annotation.ExceptionHandler
+	public ExceptionResponse invalidJWTEX (ExpiredEX e){
+		return new ExceptionResponse("JWT is invalid", e.getMessage());
 	}
 
 }

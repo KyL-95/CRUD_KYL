@@ -3,6 +3,8 @@ package com.vti.testing.login;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,23 +31,22 @@ public class JwtTokenProvider {
 //	@Value("${jwt.JWT_SECRET}")
 	private static String JWT_SECRET = "kyl2803" ;
 	 //Thời gian có hiệu lực của chuỗi jwt
-    private static final long JWT_EXPIRATION = 3600 * 1000 * 24 * 10;
+	 //	private static final long JWT_EXPIRATION = 3600 * 1000 * 24 * 10;
+	 private static final long JWT_EXPIRATION = 1000 * 15;
     public static void generateTokenForClient(HttpServletResponse response, UserDetails userDetails) throws IOException {
-    	@SuppressWarnings("unchecked")
-		Collection<GrantedAuthority> auths = (Collection<GrantedAuthority>) userDetails.getAuthorities();
     	log.info("User name là : " + userDetails.getUsername());
-		Claims claims = (Claims) Jwts.claims().put("Roles", auths);
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority).collect(Collectors.toList());;
     	String JWT = Jwts.builder()
     			// Set roles of UserDetails in payload
-    			// ?????
-				.claim("Roles" , auths)
+				.claim("Roles" , roles)
     			.setSubject(userDetails.getUsername())
     			.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
     			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
     			.compact();
     	response.getWriter().write(JWT);
     }
-    
+
     public static String getUserNameByJWT(String jwt)  {
     	if(jwt == null) {
     		return null;

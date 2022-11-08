@@ -1,4 +1,4 @@
-package com.vti.testing.controller.login;
+package com.vti.testing.controller.loginform;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
