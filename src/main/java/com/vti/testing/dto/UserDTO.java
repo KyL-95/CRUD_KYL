@@ -16,6 +16,7 @@ public class UserDTO {
 	@JsonProperty("ID")
 	private int userId;
 	private String userName;
+	private String active;
 	@NonNull
 	private List<String> roles;
 

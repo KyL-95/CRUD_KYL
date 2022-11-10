@@ -1,21 +1,23 @@
-package com.vti.testing.service;
+package com.vti.testing.service.interfaces;
 
 import java.util.List;
 
 import com.vti.testing.dto.UserDTO;
 import com.vti.testing.entity.User;
+import com.vti.testing.formcreate.FormUserCreate;
+import com.vti.testing.responseobj.ResponseObj;
 
 public interface IUserService  {
 
 	User getByUserName(String userName);
 
 	UserDTO getUserById(int id);
-//	void newUser(FormUserCreate newUser);
+	ResponseObj newUser(FormUserCreate newUser);
 
 	List<UserDTO> getAllUsers();
 
 	void updatePassWord(int id, String newPass);
 
-	void deleteUser(int id);
+	ResponseObj deleteUser(int id);
 
 }

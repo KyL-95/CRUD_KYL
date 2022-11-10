@@ -20,7 +20,7 @@ public class Role implements Serializable {
     @Column(name = "roleId", nullable = false)
     private int roleId;
     private String roleName;
-    @ManyToMany(cascade = { CascadeType.ALL },mappedBy = "roles",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<User>();
 
     @Override

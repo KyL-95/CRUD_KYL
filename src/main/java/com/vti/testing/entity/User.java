@@ -24,7 +24,7 @@ public class User implements Serializable {
 	private String userName;
 	private String passWord;
 	private String active;
-	@ManyToMany(cascade = { CascadeType.ALL },fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "user_role",
 			joinColumns = { @JoinColumn(name = "userId") },
@@ -32,11 +32,14 @@ public class User implements Serializable {
 	)
 	List<Role> roles = new ArrayList<>();
 
+	public User(String userName, String passWord) {
+		this.userName = userName;
+		this.passWord = passWord;
+	}
+
 	@Override
 	public String toString() {
-		return "User{" +
-				"userId=" + userId +
-				", userName='" + userName +
-				'}';
+		return
+				"User Name=" + userName ;
 	}
 }

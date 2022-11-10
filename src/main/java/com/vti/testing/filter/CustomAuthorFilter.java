@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vti.testing.exception.custom_exception.ExpiredEX;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.vti.testing.login.JwtTokenProvider;
+import com.vti.testing.jwt.JwtTokenProvider;
 
 import io.jsonwebtoken.Jwts;
 
@@ -32,6 +31,8 @@ import static java.util.Arrays.stream;
 
 public class CustomAuthorFilter extends OncePerRequestFilter{
 	private static final Logger log = LoggerFactory.getLogger(CustomAuthorFilter.class);
+	//	@Value("${jwt.PREFIX_TOKEN}")
+	private static final String PREFIX_TOKEN = "Bearer " ;
 	private static final String JWT_SECRET = "kyl2803";
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -42,9 +43,9 @@ public class CustomAuthorFilter extends OncePerRequestFilter{
 			filterChain.doFilter(request, response);
 		}else {
 			String authorHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if(authorHeader != null && authorHeader.startsWith("Bearer ")) {
+			if(authorHeader != null && authorHeader.startsWith(PREFIX_TOKEN)) {
 				try {
-					String token = authorHeader.substring("Bearer ".length());
+					String token = authorHeader.substring(PREFIX_TOKEN.length());
 					String userName = JwtTokenProvider.getUserNameByJWT(token);
 					// get user by this userName
 					String roles = Jwts.parser().setSigningKey(JWT_SECRET)

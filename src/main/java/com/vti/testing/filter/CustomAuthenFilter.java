@@ -16,38 +16,39 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.vti.testing.login.JwtTokenProvider;
+import com.vti.testing.jwt.JwtTokenProvider;
+
 public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
-	private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);	
-	private final AuthenticationManager manager;
-	
-	public CustomAuthenFilter(AuthenticationManager manager) {
-		this.manager = manager;
-		setFilterProcessesUrl("/login-abc");
-	}
-	
-	
-	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-			throws AuthenticationException {
+    private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);
+    private final AuthenticationManager manager;
 
-		log.info("User : ");
-	        String userName = request.getParameter("userName");
-	        String passWord = request.getParameter("passWord");
-	        log.info("User : " + userName);
-	        UsernamePasswordAuthenticationToken userToken = 
-	        		new UsernamePasswordAuthenticationToken(userName, passWord);
-	        return manager.authenticate(userToken);
-		
-	}
-	
-	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-			Authentication authentication) throws IOException, ServletException {
-		JwtTokenProvider.generateTokenForClient( response, (UserDetails) authentication.getPrincipal());
-		
-	}
+    public CustomAuthenFilter(AuthenticationManager manager) {
+        this.manager = manager;
+        setFilterProcessesUrl("/login-abc");
+    }
+
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
+
+        log.info("User : ");
+        String userName = request.getParameter("userName");
+        String passWord = request.getParameter("passWord");
+        log.info("User : " + userName);
+        UsernamePasswordAuthenticationToken userToken =
+                new UsernamePasswordAuthenticationToken(userName, passWord);
+        return manager.authenticate(userToken);
+
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                            Authentication authentication) throws IOException, ServletException {
+        JwtTokenProvider.generateTokenForClient(response, (UserDetails) authentication.getPrincipal());
+
+    }
 //	@SuppressWarnings("deprecation")
 //	@Override
 //	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
