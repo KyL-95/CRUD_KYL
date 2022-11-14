@@ -31,7 +31,6 @@ public class User implements Serializable {
 			inverseJoinColumns = { @JoinColumn(name = "roleId") }
 	)
 	List<Role> roles = new ArrayList<>();
-
 	public User(String userName, String passWord) {
 		this.userName = userName;
 		this.passWord = passWord;
@@ -40,6 +39,6 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return
-				"User Name=" + userName ;
+				"Name=" + userName ;
 	}
 }

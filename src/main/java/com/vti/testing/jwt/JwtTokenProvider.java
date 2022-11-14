@@ -11,62 +11,58 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-// Class mã hóa thông tin người dùng thành chuỗi JWT
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 @Component
 public class JwtTokenProvider {
-	private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+	private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 //	@Value("${jwt.JWT_SECRET}")
-	private static String JWT_SECRET  = "kyl2803";
-	 //Thời gian có hiệu lực của chuỗi jwt
-	 //	private static final long JWT_EXPIRATION = 3600 * 1000 * 24 * 10;
+	private String jwtSecret = "kyl2803";
 //	 @Value("${jwt.JWT_EXPIRATION}")
-	 private static long JWT_EXPIRATION = 600 * 1000;
-    public static void generateTokenForClient(HttpServletResponse response, UserDetails userDetails) throws IOException {
+	 private  Long jwtExpiration = 15000L ;
+//	@Value("${jwt.JWT_REFRESH_EXPIRATION}")
+	private  Long jwtRefreshExpiration = 3600000L;
+    public void generateTokenForClient(HttpServletResponse response, UserDetails userDetails) throws IOException {
     	log.info("User name là : " + userDetails.getUsername());
 		List<String> roles = userDetails.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority).collect(Collectors.toList());;
+				.map(GrantedAuthority::getAuthority).collect(Collectors.toList());
     	String accessJWT = Jwts.builder()
     			// Set roles of UserDetails in payload
 				.claim("Roles" , roles)
     			.setSubject(userDetails.getUsername())
-    			.setExpiration(new Date(System.currentTimeMillis() +  JWT_EXPIRATION))
-    			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+    			.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+    			.signWith(SignatureAlgorithm.HS512, jwtSecret)
     			.compact();
 		String refreshToken = Jwts.builder()
-				// Set roles of UserDetails in payload
 				.claim("Roles" , roles)
 				.setSubject(userDetails.getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() +  JWT_EXPIRATION + 3600 * 1000))
-				.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+				.setExpiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
-    	response.getWriter().write("accessJWT			: " + accessJWT + "\n" + "refreshToken		: " + refreshToken);
-
-
+    	response.getWriter().write("accessJWT			: " + accessJWT + "\n" +
+										"refreshToken		: " + refreshToken);
 	}
 
-    public static String getUserNameByJWT(String jwt)  {
+    public  String getUserNameByJWT(String jwt)  {
     	if(jwt == null) {
     		return null;
     	}
     	// Parse the token
-    	String userName = Jwts.parser()
-    			.setSigningKey(JWT_SECRET)   			
-    			.parseClaimsJws(jwt)
-    			.getBody()
-    			.getSubject();
-    	return userName != null ? 
-    			userName	
-    			: null ;
+		return Jwts.parser()
+				.setSigningKey(jwtSecret)
+				.parseClaimsJws(jwt)
+				.getBody()
+				.getSubject();
     }
     
-    public static boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");

@@ -31,7 +31,7 @@ public class UserController {
 	}
 	@PostMapping("/newUser")
 //	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-	public ResponseObj newUser(@RequestBody(required = true) FormUserCreate newUser) {
+	public ResponseObj newUser(@RequestBody(required = true) FormUserCreate newUser) throws Exception {
 		return userService.newUser(newUser);
 	}
 

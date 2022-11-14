@@ -5,6 +5,7 @@ import com.vti.testing.filter.CustomAuthenFilter;
 import com.vti.testing.filter.CustomAuthorFilter;
 import com.vti.testing.service.UserDetailsResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled	= true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private UserDetailsResult details;
     @Autowired
@@ -39,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeRequests()
-                .antMatchers("/user/newUser", "/getRefreshToken/**","/roles/getAll").permitAll()
+                .antMatchers("/user/newUser", "/getRefreshToken/**","/roles/getAll","/user/logining-user").permitAll()
                 .antMatchers("/user/getAll").hasAnyRole("ADMIN","MANAGER")
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")

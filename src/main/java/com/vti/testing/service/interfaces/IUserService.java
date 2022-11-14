@@ -12,7 +12,7 @@ public interface IUserService  {
 	User getByUserName(String userName);
 
 	UserDTO getUserById(int id);
-	ResponseObj newUser(FormUserCreate newUser);
+	ResponseObj newUser(FormUserCreate newUser) throws Exception;
 
 	List<UserDTO> getAllUsers();
 

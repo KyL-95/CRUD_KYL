@@ -31,7 +31,7 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String json = ow.writeValueAsString(e);
 		
 		// return json
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
 		
@@ -51,7 +51,7 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String json = ow.writeValueAsString(e);
 		
 		// return json
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
 	}
