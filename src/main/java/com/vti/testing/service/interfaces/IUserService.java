@@ -15,9 +15,11 @@ public interface IUserService  {
 	ResponseObj newUser(FormUserCreate newUser) throws Exception;
 
 	List<UserDTO> getAllUsers();
+	List<UserDTO> getAllActiveUser();
 
 	void updatePassWord(int id, String newPass);
 
 	ResponseObj deleteUser(int id);
 
+    UserDTO getById(int id);
 }

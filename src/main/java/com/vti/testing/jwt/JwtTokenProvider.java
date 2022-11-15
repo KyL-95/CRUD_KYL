@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public class JwtTokenProvider {
 //	@Value("${jwt.JWT_SECRET}")
 	private String jwtSecret = "kyl2803";
 //	 @Value("${jwt.JWT_EXPIRATION}")
-	 private  Long jwtExpiration = 15000L ;
+	 private  Long jwtExpiration = 15000L ; // 15s
 //	@Value("${jwt.JWT_REFRESH_EXPIRATION}")
-	private  Long jwtRefreshExpiration = 3600000L;
+	private  Long jwtRefreshExpiration = 3600000L; // 1 hour
     public void generateTokenForClient(HttpServletResponse response, UserDetails userDetails) throws IOException {
     	log.info("User name là : " + userDetails.getUsername());
 		List<String> roles = userDetails.getAuthorities().stream()
@@ -44,8 +44,15 @@ public class JwtTokenProvider {
 				.setExpiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
-    	response.getWriter().write("accessJWT			: " + accessJWT + "\n" +
-										"refreshToken		: " + refreshToken);
+		// init obj JwtResponse with accessJWT & refreshToken
+		JwtResponse jwtResponse = new JwtResponse(accessJWT,refreshToken);
+		// convert obj -> json with jackson:
+		com.fasterxml.jackson.databind.ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			// obj -> String
+		String json = ow.writeValueAsString(jwtResponse);
+			// set content type of response -> json
+		response.setContentType("application/json;charset=UTF-8");
+		response.getWriter().write(json);
 	}
 
     public  String getUserNameByJWT(String jwt)  {
@@ -60,20 +67,20 @@ public class JwtTokenProvider {
 				.getSubject();
     }
     
-    public boolean validateToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
-        } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");	
-        } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty.");
-        }
-        return false;
-    }
+//    public boolean validateToken(String authToken) {
+//        try {
+//            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+//            return true;
+//        } catch (MalformedJwtException ex) {
+//            log.error("Invalid JWT token");
+//        } catch (ExpiredJwtException ex) {
+//            log.error("Expired JWT token");
+//        } catch (UnsupportedJwtException ex) {
+//            log.error("Unsupported JWT token");
+//        } catch (IllegalArgumentException ex) {
+//            log.error("JWT claims string is empty.");
+//        }
+//        return false;
+//    }
 
 }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.vti.testing.jwt.JwtTokenProvider;
 
 import io.jsonwebtoken.Jwts;
@@ -69,16 +69,19 @@ public class CustomAuthorFilter extends OncePerRequestFilter{
 					filterChain.doFilter(request, response);
 					
 				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (JWTVerificationException e) {
-					e.printStackTrace();
+					log.error("JWT claims string is empty.");
+					response.sendError(400,"Token claims string is empty.");
 				} catch (ExpiredJwtException  e) {
 //					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 //					response.setHeader("Error","Token is expired");
+					log.error("Expired JWT token");
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"Token has been expired");
-
 				} catch (MalformedJwtException  e) {
+					log.error("Invalid JWT token");
 					response.sendError(400,"Token has been invalid");
+				}catch (UnsupportedJwtException ex) {
+					log.error("Unsupported JWT token");
+					response.sendError(400,"Unsupported JWT token");
 				}
 			}
 			else {

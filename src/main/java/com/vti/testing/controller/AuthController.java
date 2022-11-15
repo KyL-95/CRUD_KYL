@@ -1,6 +1,5 @@
 package com.vti.testing.controller;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.vti.testing.login.LoginInfo;
 import com.vti.testing.dto.UserDTO;
 import com.vti.testing.entity.Role;

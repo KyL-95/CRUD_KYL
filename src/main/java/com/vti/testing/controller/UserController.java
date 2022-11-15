@@ -29,6 +29,15 @@ public class UserController {
 	public List<UserDTO> getAll() {
 		return userService.getAllUsers();
 	}
+
+	@GetMapping("/getAllActiveUser")
+	public List<UserDTO> getAllActiveUser() {
+		return userService.getAllActiveUser();
+	}
+	@GetMapping("/getById/{id}")
+	public UserDTO getById(@PathVariable("id") int id){
+		return userService.getById(id);
+	}
 	@PostMapping("/newUser")
 //	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	public ResponseObj newUser(@RequestBody(required = true) FormUserCreate newUser) throws Exception {

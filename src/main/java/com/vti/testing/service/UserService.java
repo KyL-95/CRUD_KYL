@@ -1,11 +1,9 @@
 package com.vti.testing.service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.vti.testing.dto.UserDTO;
 import com.vti.testing.entity.Role;
 import com.vti.testing.entity.User;
@@ -14,7 +12,6 @@ import com.vti.testing.exception.custom_exception.NotFoundEx;
 import com.vti.testing.formcreate.FormUserCreate;
 import com.vti.testing.repository.IRoleRepository;
 import com.vti.testing.repository.IUserRepository;
-
 import com.vti.testing.responseobj.ResponseObj;
 import com.vti.testing.service.interfaces.IUserService;
 import org.modelmapper.ModelMapper;
@@ -31,7 +28,6 @@ public class UserService implements IUserService {
 		Matcher matcher = pattern.matcher(password);
 		return matcher.matches();
 	}
-
 	@Autowired
 	private IUserRepository userRepository;
 	@Autowired
@@ -52,8 +48,7 @@ public class UserService implements IUserService {
 	public UserDTO getUserById(int id) {
 		Optional<User> user = userRepository.findById(id);
 		if (user.isPresent()) {
-			UserDTO dto = modelMapper.map(user.get(), UserDTO.class);
-			return dto;
+			return modelMapper.map(user.get(), UserDTO.class); // dto object
 		}
 		throw new NotFoundEx("Cannot find user with id = " + id );
 	}
@@ -62,11 +57,9 @@ public class UserService implements IUserService {
 	public ResponseObj newUser(FormUserCreate newUser) throws Exception {
 		String userName = newUser.getUserName();
 		String passWord = newUser.getPassWord();
-		// Validate user name
 		if(userRepository.existsByUserName(userName)){
 			throw new AlreadyExistEx("This user: " + userName + " has been used!");
 		}
-		// Validate user's password :
 		if (!validatePassWord(passWord)){
 			throw new Exception("Password is not valid, please check your password");
 		}
@@ -86,10 +79,15 @@ public class UserService implements IUserService {
 	@Override
 	public List<UserDTO> getAllUsers() {
 		List<User> entities = userRepository.findAll();
+		return modelMapper.map(entities,
+				new TypeToken<List<UserDTO>>(){}.getType()); // return list dtos
+	}
 
-		List<UserDTO> dtos = modelMapper.map(entities,
+	@Override
+	public List<UserDTO> getAllActiveUser() {
+		List<User> entities = userRepository.getAllActiveUser();
+		return modelMapper.map(entities,
 				new TypeToken<List<UserDTO>>(){}.getType());
-		return dtos;
 	}
 
 	@Override
@@ -109,6 +107,14 @@ public class UserService implements IUserService {
 		}
 		throw new NotFoundEx("This user is not exists with to delete");
 
+	}
+
+	@Override
+	public UserDTO getById(int id) {
+		if(!userRepository.existsById(id)){
+			throw new AlreadyExistEx("This user is not exists");
+		}
+		return modelMapper.map(userRepository.findById(id), UserDTO.class);
 	}
 
 }
