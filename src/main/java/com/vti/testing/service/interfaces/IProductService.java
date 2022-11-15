@@ -1,4 +1,4 @@
-package com.vti.testing.service;
+package com.vti.testing.service.interfaces;
 
 import java.util.List;
 

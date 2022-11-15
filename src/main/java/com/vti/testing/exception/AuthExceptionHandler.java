@@ -21,7 +21,7 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		String status = "403 - Fobidden";
+		String status = "403 - Forbidden";
 		String message = "Can't access to this API";
 		
 		ExceptionResponse e = new ExceptionResponse(status, message);
@@ -31,6 +31,7 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String json = ow.writeValueAsString(e);
 		
 		// return json
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
 		
@@ -50,6 +51,7 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String json = ow.writeValueAsString(e);
 		
 		// return json
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
 	}
