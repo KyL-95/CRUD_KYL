@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")
                 .anyRequest().authenticated()
+//            .and().oauth2Login();
             .and()
             .addFilter(new CustomAuthenFilter(authenticationManagerBean()))
             .addFilterBefore(new CustomAuthorFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider; // bị null
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);
     private final AuthenticationManager manager;
 
@@ -31,7 +31,6 @@ public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
         log.info("User : ");
         String userName = request.getParameter("userName");
         String passWord = request.getParameter("passWord");
