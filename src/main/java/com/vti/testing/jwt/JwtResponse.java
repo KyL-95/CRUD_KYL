@@ -5,11 +5,10 @@ import lombok.*;
 public class JwtResponse {
     private String accessToken;
     private String refreshToken;
-    private final String tokenType;
+    private static final String tokenType = "Bearer";
 
     public JwtResponse(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.tokenType = "Bearer";
     }
 }

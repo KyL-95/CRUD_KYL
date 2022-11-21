@@ -40,7 +40,6 @@ public class JwtTokenProvider {
     			.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
     			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
     			.compact();
-
 		String refreshToken = Jwts.builder()
 				.claim(CLAIM_NAME , roles)
 				.setSubject(userDetails.getUsername())
@@ -87,7 +86,6 @@ public class JwtTokenProvider {
 		String roles = Jwts.parser().setSigningKey(JWT_SECRET)
 				.parseClaimsJws(token).getBody().get(CLAIM_NAME).toString();
 		roles = roles.substring(1, roles.length() - 1); // 2 ngày debug mới nghĩ ra dòng này :(((
-
 		System.err.println("----------sub-----------   " + roles);
 		return stream(roles.split(", "))
 				.filter(auth -> !auth.trim().isEmpty())

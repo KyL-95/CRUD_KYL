@@ -41,7 +41,7 @@ public class UserService implements IUserService {
 		if(userRepository.existsByUserName(userName)){
 			return userRepository.findByUserName(userName);
 		}
-		throw new NotFoundEx("This user: " + userName + " is not found!");
+		throw new NotFoundEx("This user:" + userName + " is not found!");
 	}
 
 	@Override

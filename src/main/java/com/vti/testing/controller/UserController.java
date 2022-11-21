@@ -2,6 +2,7 @@ package com.vti.testing.controller;
 
 import java.util.List;
 
+import com.vti.testing.author_anotations.IsUser;
 import com.vti.testing.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class UserController {
 	public List<UserDTO> getAll() {
 		return userService.getAllUsers();
 	}
-
 	@GetMapping("/getAllActiveUser")
+	@IsUser
 	public List<UserDTO> getAllActiveUser() {
 		return userService.getAllActiveUser();
 	}

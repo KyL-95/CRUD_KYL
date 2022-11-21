@@ -35,20 +35,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
     http
             .csrf().disable()
-            .exceptionHandling()
-            .authenticationEntryPoint(authExceptionHandler)
-            .accessDeniedHandler(authExceptionHandler)
-            .and()
+//            .exceptionHandling()
+//            .authenticationEntryPoint(authExceptionHandler)
+//            .accessDeniedHandler(authExceptionHandler)
+//            .and()
             .authorizeRequests()
-                .antMatchers("/user/newUser", "/getRefreshToken/**","/roles/getAll","/user/logining-user").permitAll()
+                .antMatchers("/user/newUser","/login","/roles/getAll","/user/logining-user").permitAll()
                 .antMatchers("/user/getAll").hasAnyRole("ADMIN","MANAGER")
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")
                 .anyRequest().authenticated()
-//            .and().oauth2Login();
-            .and()
-            .addFilter(new CustomAuthenFilter(authenticationManagerBean()))
-            .addFilterBefore(new CustomAuthorFilter(), UsernamePasswordAuthenticationFilter.class);
+            .and().formLogin()
+            .and().logout()
+            .and().oauth2Login();
+
+//            .and()
+//            .addFilter(new CustomAuthenFilter(authenticationManagerBean()))
+//            .addFilterBefore(new CustomAuthorFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
     @Bean
