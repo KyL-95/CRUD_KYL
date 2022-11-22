@@ -20,6 +20,7 @@ public class UserDetailsResult implements UserDetailsService{
 		if(user == null) {
 			throw new UsernameNotFoundException("This user:'" + userName + "' does not exists!");
 		}
+		System.out.println("user: "+ user);
 		return new CustomUserDetails(user);
 	}
 

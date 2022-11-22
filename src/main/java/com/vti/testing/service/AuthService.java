@@ -5,6 +5,7 @@ import com.vti.testing.entity.Role;
 import com.vti.testing.entity.User;
 import com.vti.testing.repository.IRoleRepository;
 import com.vti.testing.repository.IUserRepository;
+import com.vti.testing.responseobj.ResponseObj;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,10 @@ public class AuthService {
     private IUserRepository userRepository;
     @Autowired
     private IRoleRepository roleRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
-    public User getUserByName (String email){
+    public ResponseObj getUserByName (String email){
         if(!userRepository.existsByUserName(email)){
             String DEFAULT_PASSWORD = "Superkyl2509";
             User newUser = new User(email, DEFAULT_PASSWORD);
@@ -28,8 +31,10 @@ public class AuthService {
             newUserRoles.add(role);
             newUser.setRoles(newUserRoles);
             userRepository.save(newUser);
-            return newUser;
+            UserDTO dto = modelMapper.map(newUser, UserDTO.class);
+            return new ResponseObj(""," New User has been created",dto);
         }
-        return userRepository.findByUserName(email);
+        return new ResponseObj("","This user has been existed",
+                modelMapper.map(userRepository.findByUserName(email), UserDTO.class));
     }
 }

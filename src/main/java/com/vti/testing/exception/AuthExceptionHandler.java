@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -25,16 +25,13 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String message = "Can't access to this API";
 		
 		ExceptionResponse e = new ExceptionResponse(status, message);
-		
 		// convert ExceptionResponse to JSON
-		com.fasterxml.jackson.databind.ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = ow.writeValueAsString(e);
-		
 		// return json
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
-		
 	}
 	
 	// 401
@@ -45,11 +42,10 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String message = "User Name or PassWord is incorrect";
 			
 		ExceptionResponse e = new ExceptionResponse(status, message);
-		
+
 		// convert ExceptionResponse to JSON
-		com.fasterxml.jackson.databind.ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = ow.writeValueAsString(e);
-		
 		// return json
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setContentType("application/json;charset=UTF-8");

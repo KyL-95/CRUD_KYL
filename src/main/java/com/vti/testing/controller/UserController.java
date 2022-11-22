@@ -2,6 +2,7 @@ package com.vti.testing.controller;
 
 import java.util.List;
 
+import com.vti.testing.author_anotations.IsAdmin;
 import com.vti.testing.author_anotations.IsUser;
 import com.vti.testing.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserController {
 		return userService.getAllUsers();
 	}
 	@GetMapping("/getAllActiveUser")
-	@IsUser
+//	@IsAdmin
 	public List<UserDTO> getAllActiveUser() {
 		return userService.getAllActiveUser();
 	}
@@ -51,9 +52,7 @@ public class UserController {
 		String newPassEncode = passwordEncoder.encode(user.getPassWord());
 		userService.updatePassWord(id, newPassEncode);
 		return new ResponseObj("200", "PassWord has been Updated", newPassEncode);
-
 	}
-	
 	@DeleteMapping("/delete/{id}")
 	public ResponseObj deleteUser(@PathVariable("id") int id) {
 		return userService.deleteUser(id);
