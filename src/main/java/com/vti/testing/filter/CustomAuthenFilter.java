@@ -24,8 +24,9 @@ public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);
     private final AuthenticationManager manager;
 
-    public CustomAuthenFilter(AuthenticationManager manager) {
+    public CustomAuthenFilter(AuthenticationManager manager, JwtTokenProvider jwtTokenProvider) {
         this.manager = manager;
+        this.jwtTokenProvider = jwtTokenProvider;
         setFilterProcessesUrl("/login-abc");
     }
 
@@ -42,7 +43,7 @@ public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        new JwtTokenProvider().generateTokenForClient(response, (UserDetails) authentication.getPrincipal());
+        jwtTokenProvider.generateTokenForClient(response, (UserDetails) authentication.getPrincipal());
 
     }
 }

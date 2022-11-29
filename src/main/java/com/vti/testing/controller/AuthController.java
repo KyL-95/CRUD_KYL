@@ -12,6 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,11 +45,13 @@ public class AuthController {
     @PostMapping(value = "/login-abc")
     public void login() throws IOException {
     }
-    @GetMapping("/user/logining-user")	// Lấy thông tin user đang login : Dùng principal
+    @GetMapping("/user/logging-user")	// Lấy thông tin user đang login : Dùng principal
 //	@PreAuthorize("hasAnyRole('ADMIN')")  // Admin mới đc gọi API này
-    public UserDTO loginInfor(Principal principal) {
-        String loginUserName = principal.getName();
-        System.out.println("Logining : " + loginUserName);
+    public UserDTO loginInfo(Authentication authentication) {
+        String loginUserName = authentication.getName();
+
+//        String loginUserName = principal.getName();
+        System.out.println("Logging : " + loginUserName);
         User entity = userService.getByUserName(loginUserName);
         System.out.println(loginUserName);
         return modelMapper.map(entity, UserDTO.class);

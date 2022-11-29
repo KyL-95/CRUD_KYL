@@ -3,6 +3,7 @@ package com.vti.testing.login;
 import com.vti.testing.exception.AuthExceptionHandler;
 import com.vti.testing.filter.CustomAuthenFilter;
 import com.vti.testing.filter.CustomAuthorFilter;
+import com.vti.testing.jwt.JwtTokenProvider;
 import com.vti.testing.service.UserDetailsResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled	= true)
+//@EnableGlobalMethodSecurity(prePostEnabled	= true) // bỏ đi bị lỗi
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private UserDetailsResult details;
     @Autowired
@@ -40,14 +43,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeRequests()
-                .antMatchers("/user/newUser", "/user/getAllActiveUser","/roles/getAll","/user/logining-user").permitAll()
+                .antMatchers("/user/newUser", "/user/getAllActiveUser","/roles/getAll","/user/logging-user").permitAll()
                 .antMatchers("/user/getAll").hasAnyRole("ADMIN","MANAGER")
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")
                 .anyRequest().authenticated()
 //            .and().oauth2Login();
             .and()
-            .addFilter(new CustomAuthenFilter(authenticationManagerBean()))
+            .addFilter(new CustomAuthenFilter(authenticationManagerBean(), jwtTokenProvider))
             .addFilterBefore(new CustomAuthorFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }

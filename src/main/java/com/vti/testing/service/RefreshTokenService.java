@@ -5,6 +5,7 @@ import com.vti.testing.exception.custom_exception.TokenRefreshException;
 import com.vti.testing.repository.IRefreshTokenRepository;
 import com.vti.testing.repository.IUserRepository;
 import com.vti.testing.service.interfaces.IRefreshTokenService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +18,9 @@ import java.util.UUID;
 public class RefreshTokenService implements IRefreshTokenService {
 //    @Value("${jwt.JWT_REFRESH_EXPIRATION}")
     @Autowired
-    private IRefreshTokenRepository refreshTokenRepository;
-
+    private  IRefreshTokenRepository refreshTokenRepository;
     @Autowired
-    private IUserRepository userRepository; // bị null ????
+    private  IUserRepository userRepository; // bị null ????
     private final Long refreshTokenDurationMs = 3600000L;
     @Override
     public Optional<RefreshToken> findByToken(String token) {

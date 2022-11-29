@@ -29,7 +29,6 @@ import com.vti.testing.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Jwts;
 
 import static java.util.Arrays.stream;
-@Component
 public class CustomAuthorFilter extends OncePerRequestFilter{
 //	@Autowired
 //	private JwtTokenProvider jwtTokenProvider;

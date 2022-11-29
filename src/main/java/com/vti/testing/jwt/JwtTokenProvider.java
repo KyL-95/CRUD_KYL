@@ -4,15 +4,21 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.vti.testing.entity.RefreshToken;
 import com.vti.testing.service.RefreshTokenService;
+import com.vti.testing.service.interfaces.IRefreshTokenService;
 import io.jsonwebtoken.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,16 +27,16 @@ import static java.util.Arrays.stream;
 
 @Component
 @Getter
-public class JwtTokenProvider {
-//	@Autowired
-//	private IRefreshTokenService refreshTokenService;
+public class JwtTokenProvider  {
+	@Autowired
+	private IRefreshTokenService refreshTokenService;
 	private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 //	@Value("${jwt.JWT_SECRET}")
 	private final String JWT_SECRET = "kyl2803";
 //	 @Value("${jwt.JWT_EXPIRATION}")
-	 private  Long jwtExpiration = 15000L ; // 15s
+	 private final Long jwtExpiration = 15000L ; // 15s
 //	@Value("${jwt.JWT_REFRESH_EXPIRATION}")
-	private  Long jwtRefreshExpiration = 3600000L; // 1 hour
+	private final Long jwtRefreshExpiration = 3600000L; // 1 hour
 	private final String CLAIM_NAME = "Roles";
 	private  final String PREFIX_TOKEN = "Bearer " ;
     public void generateTokenForClient(HttpServletResponse response, UserDetails userDetails) throws IOException {
@@ -44,21 +50,18 @@ public class JwtTokenProvider {
     			.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
     			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
     			.compact();
-
-		System.out.println(accessToken);
 //		String refreshToken = Jwts.builder()
 //				.claim(CLAIM_NAME , roles)
 //				.setSubject(userDetails.getUsername())
 //				.setExpiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
 //				.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
 //				.compact();
-
 		// init obj JwtResponse with accessToken & refreshToken
-//		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
-		RefreshToken refreshToken = new RefreshTokenService().createRefreshToken(userDetails.getUsername());
+		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
+//		RefreshToken refreshToken = new RefreshTokenService().createRefreshToken(userDetails.getUsername());
 
-		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken.getToken());
-//		JwtResponse jwtResponse1 = new JwtResponse()
+//		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken.getToken());
+		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken.getToken(),userDetails.getUsername(),roles);
 		// convert obj -> json with jackson:
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			// obj -> String
@@ -104,4 +107,6 @@ public class JwtTokenProvider {
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 	}
+
+
 }
