@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeRequests()
-                .antMatchers("/user/newUser", "/getRefreshToken/**","/roles/getAll","/user/logining-user").permitAll()
+                .antMatchers("/user/newUser", "/user/getAllActiveUser","/roles/getAll","/user/logining-user").permitAll()
                 .antMatchers("/user/getAll").hasAnyRole("ADMIN","MANAGER")
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")

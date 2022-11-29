@@ -1,6 +1,5 @@
 package com.vti.testing.configs;
 
-import com.vti.testing.jwt.JwtTokenProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +17,10 @@ public class ConFigBeans {
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+//	@Bean
+//	public RefreshTokenService refreshTokenService(){
+//		return new RefreshTokenService();
+//	}
 
 }

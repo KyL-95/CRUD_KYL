@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.vti.testing.entity.RefreshToken;
+import com.vti.testing.service.RefreshTokenService;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -20,6 +22,8 @@ import static java.util.Arrays.stream;
 @Component
 @Getter
 public class JwtTokenProvider {
+//	@Autowired
+//	private IRefreshTokenService refreshTokenService;
 	private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 //	@Value("${jwt.JWT_SECRET}")
 	private final String JWT_SECRET = "kyl2803";
@@ -41,14 +45,20 @@ public class JwtTokenProvider {
     			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
     			.compact();
 
-		String refreshToken = Jwts.builder()
-				.claim(CLAIM_NAME , roles)
-				.setSubject(userDetails.getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
-				.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-				.compact();
+		System.out.println(accessToken);
+//		String refreshToken = Jwts.builder()
+//				.claim(CLAIM_NAME , roles)
+//				.setSubject(userDetails.getUsername())
+//				.setExpiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
+//				.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+//				.compact();
+
 		// init obj JwtResponse with accessToken & refreshToken
-		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken);
+//		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
+		RefreshToken refreshToken = new RefreshTokenService().createRefreshToken(userDetails.getUsername());
+
+		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken.getToken());
+//		JwtResponse jwtResponse1 = new JwtResponse()
 		// convert obj -> json with jackson:
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			// obj -> String

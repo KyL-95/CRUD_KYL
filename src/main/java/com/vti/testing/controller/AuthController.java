@@ -41,7 +41,7 @@ public class AuthController {
     private ModelMapper modelMapper;
 
     @PostMapping(value = "/login-abc")
-    public void login(@RequestBody LoginInfo infor) throws IOException {
+    public void login() throws IOException {
     }
     @GetMapping("/user/logining-user")	// Lấy thông tin user đang login : Dùng principal
 //	@PreAuthorize("hasAnyRole('ADMIN')")  // Admin mới đc gọi API này

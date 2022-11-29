@@ -24,6 +24,9 @@ public class User implements Serializable {
 	private String userName;
 	private String passWord;
 	private String active;
+	@OneToOne(mappedBy = "user")
+	private RefreshToken refreshToken;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "user_role",
