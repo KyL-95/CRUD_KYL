@@ -24,7 +24,7 @@ public class User implements Serializable {
 	private String userName;
 	private String passWord;
 	private String active;
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user") //  ,fetch = FetchType.LAZY
 	private RefreshToken refreshToken;
 
 	@ManyToMany(fetch = FetchType.EAGER)

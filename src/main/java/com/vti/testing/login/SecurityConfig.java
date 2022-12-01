@@ -43,15 +43,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeRequests()
-                .antMatchers("/user/newUser", "/user/getAllActiveUser","/roles/getAll","/user/logging-user").permitAll()
+                .antMatchers("/user/newUser", "/user/getAllActiveUser","/roles/getAll","/user/logging-user","/user/refresh-token").permitAll()
                 .antMatchers("/user/getAll").hasAnyRole("ADMIN","MANAGER")
                 .antMatchers("/user/delete/**").hasAnyRole("ADMIN")
                 .antMatchers("/api/v1/product/getAll").hasAnyRole("MANAGER")
-                .anyRequest().authenticated()
+                .anyRequest().authenticated().and().httpBasic()
 //            .and().oauth2Login();
             .and()
             .addFilter(new CustomAuthenFilter(authenticationManagerBean(), jwtTokenProvider))
-            .addFilterBefore(new CustomAuthorFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterAfter(new CustomAuthorFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
     }
     @Bean

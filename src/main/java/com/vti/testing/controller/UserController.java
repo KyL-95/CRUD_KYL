@@ -36,6 +36,7 @@ public class UserController {
 	}
 	@GetMapping("/getById/{id}")
 	public UserDTO getById(@PathVariable("id") int id){
+
 		return userService.getById(id);
 	}
 	@PostMapping("/newUser")

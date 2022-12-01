@@ -15,12 +15,14 @@ import com.vti.testing.repository.IRoleRepository;
 import com.vti.testing.repository.IUserRepository;
 import com.vti.testing.responseobj.ResponseObj;
 import com.vti.testing.service.interfaces.IUserService;
+import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
+@Getter
 public class UserService implements IUserService {
 	private final String PASSWORD_PATTERN =
 			"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
@@ -41,6 +43,7 @@ public class UserService implements IUserService {
 	@Override
 	public User getByUserName(String userName) {
 		if(userRepository.existsByUserName(userName)){
+
 			return userRepository.findByUserName(userName);
 		}
 		throw new NotFoundEx("This user: " + userName + " is not found!");

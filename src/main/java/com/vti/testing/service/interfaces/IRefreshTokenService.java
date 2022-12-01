@@ -8,6 +8,6 @@ public interface IRefreshTokenService {
     public Optional<RefreshToken> findByToken(String token) ;
     public RefreshToken createRefreshToken(String userName);
     public RefreshToken verifyExpiration(RefreshToken token);
-    public int deleteByUserId(int userId);
+    public int deleteByUserName(String userName);
 
 }

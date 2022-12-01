@@ -32,6 +32,7 @@ public class CustomUserDetails implements UserDetails {
 		// Get role user -> add to List
 //		List<Role> roles = user.getRoles();
 		List<String> roles = user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList());
+
 		roles.forEach(role -> auth.add(new SimpleGrantedAuthority(role)));
 //		for (int i = 0; i < roles.size() ; i++) {
 //			auth.add(new SimpleGrantedAuthority(roles.get(i)));

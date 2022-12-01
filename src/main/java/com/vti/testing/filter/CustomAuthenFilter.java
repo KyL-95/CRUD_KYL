@@ -1,10 +1,10 @@
 package com.vti.testing.filter;
 
 import com.vti.testing.jwt.JwtTokenProvider;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,13 +18,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@AllArgsConstructor
 public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider; // bị null
+//    @Autowired
+    private JwtTokenProvider jwtTokenProvider; // bị null -> ko cần dùng autowired tại đây. Dùng tại class khởi tạo
+    // Obj CustomAuthenFilter là đc
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);
     private final AuthenticationManager manager;
 
-    public CustomAuthenFilter(AuthenticationManager manager, JwtTokenProvider jwtTokenProvider) {
+    public CustomAuthenFilter(AuthenticationManager manager
+            , JwtTokenProvider jwtTokenProvider
+    ) {
         this.manager = manager;
         this.jwtTokenProvider = jwtTokenProvider;
         setFilterProcessesUrl("/login-abc");
@@ -43,7 +47,7 @@ public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        jwtTokenProvider.generateTokenForClient(response, (UserDetails) authentication.getPrincipal());
+            jwtTokenProvider.generateTokenForClient(response,  authentication.getName());
 
     }
 }

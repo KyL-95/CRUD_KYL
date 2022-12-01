@@ -30,24 +30,28 @@ import io.jsonwebtoken.Jwts;
 
 import static java.util.Arrays.stream;
 public class CustomAuthorFilter extends OncePerRequestFilter{
-//	@Autowired
-//	private JwtTokenProvider jwtTokenProvider;
+	private final JwtTokenProvider jwtTokenProvider;
+
+	public CustomAuthorFilter(JwtTokenProvider jwtTokenProvider) {
+		this.jwtTokenProvider = jwtTokenProvider;
+	}
+
 	private  final Logger log = LoggerFactory.getLogger(CustomAuthorFilter.class);
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		JwtTokenProvider tokenProvider = new JwtTokenProvider();
+//		JwtTokenProvider tokenProvider = new JwtTokenProvider();
 		if (request.getServletPath().equals("/login-abc")) {
 			System.out.println("-----------------Oke---------------");
 			filterChain.doFilter(request, response);
 		}else {
 			String authorHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if(authorHeader != null && authorHeader.startsWith(tokenProvider.getPREFIX_TOKEN())) {
+			if(authorHeader != null && authorHeader.startsWith(jwtTokenProvider.getPREFIX_TOKEN())) {
 				String token = null;
 				try {
-					token = authorHeader.substring(tokenProvider.getPREFIX_TOKEN().length());
-					String userName = tokenProvider.getUserNameByJWT(token);
-					Collection<? extends GrantedAuthority> authorities = tokenProvider
+					token = authorHeader.substring(jwtTokenProvider.getPREFIX_TOKEN().length());
+					String userName = jwtTokenProvider.getUserNameByJWT(token);
+					Collection<? extends GrantedAuthority> authorities = jwtTokenProvider
 							.getRolesByToken(token);
 					log.info("authors : " + authorities);
 					UsernamePasswordAuthenticationToken authenticationToken =
