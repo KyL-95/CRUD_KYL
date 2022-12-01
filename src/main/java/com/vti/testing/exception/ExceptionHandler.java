@@ -55,7 +55,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public ExceptionResponse expiredRefreshToken(TokenRefreshException e) {
-        return new ExceptionResponse("Expired", e.getMessage());
+        return new ExceptionResponse("Refresh Token Bad Request!", e.getMessage());
     }
 
 }

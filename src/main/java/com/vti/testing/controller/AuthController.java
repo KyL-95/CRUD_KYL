@@ -1,6 +1,7 @@
 package com.vti.testing.controller;
 
 import com.vti.testing.entity.RefreshToken;
+import com.vti.testing.exception.custom_exception.TokenRefreshException;
 import com.vti.testing.jwt.TokenRefreshRequest;
 import com.vti.testing.jwt.TokenRefreshResponse;
 import com.vti.testing.login.LoginInfo;
@@ -63,11 +64,16 @@ public class AuthController {
     @PostMapping("/user/refresh-token")
     public TokenRefreshResponse refreshToken(@RequestBody TokenRefreshRequest tokenRefreshRequest){
         String refreshTokenFromRequest = tokenRefreshRequest.getRefreshToken();
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenFromRequest).get();
-//        refreshToken = refreshTokenService.verifyExpiration(refreshToken);
-        // Get user from refreshToken
-        User user = userRepository.findById(refreshToken.getUser().getUserId()).get();
-        String accessToken = jwtTokenProvider.generateJwt(user.getUserName());
-        return new TokenRefreshResponse(accessToken,refreshTokenFromRequest);
+
+        Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(refreshTokenFromRequest);
+        if(refreshToken.isPresent()) {
+            //        refreshToken = refreshTokenService.verifyExpiration(refreshToken);
+            // Get user from refreshToken
+            User user = userRepository.findById(refreshToken.get().getUser().getUserId()).get();
+
+            String accessToken = jwtTokenProvider.generateJwt(user.getUserName());
+            return new TokenRefreshResponse(accessToken, refreshTokenFromRequest);
+        }
+        throw new TokenRefreshException("This token is not in database");
     }
 }
