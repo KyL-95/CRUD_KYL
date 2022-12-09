@@ -27,17 +27,9 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// List ROLE của user(1 user có thể có nhiều role nên mặc định sẽ là list)
 		List<SimpleGrantedAuthority> auth = new ArrayList<>();
-		// Get role user -> add to List
-//		List<Role> roles = user.getRoles();
 		List<String> roles = user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList());
-
 		roles.forEach(role -> auth.add(new SimpleGrantedAuthority(role)));
-//		for (int i = 0; i < roles.size() ; i++) {
-//			auth.add(new SimpleGrantedAuthority(roles.get(i)));
-//		}
-//		System.out.println("--------------- " + auth.toString());
 		return auth;
 	}
 

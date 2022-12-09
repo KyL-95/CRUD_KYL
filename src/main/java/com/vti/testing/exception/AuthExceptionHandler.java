@@ -45,7 +45,6 @@ public class AuthExceptionHandler implements AuthenticationEntryPoint, AccessDen
 		String message = "User Name or PassWord is incorrect";
 			
 		ExceptionResponse e = new ExceptionResponse(status, message);
-		
 		// convert ExceptionResponse to JSON
 		com.fasterxml.jackson.databind.ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = ow.writeValueAsString(e);

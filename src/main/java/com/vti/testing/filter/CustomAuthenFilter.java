@@ -2,14 +2,10 @@ package com.vti.testing.filter;
 
 import com.vti.testing.jwt.JwtTokenProvider;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -20,10 +16,7 @@ import java.io.IOException;
 
 @AllArgsConstructor
 public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
-//    @Autowired
-    private JwtTokenProvider jwtTokenProvider; // bị null -> ko cần dùng autowired tại đây. Dùng tại class khởi tạo
-    // Obj CustomAuthenFilter là đc
-    private static final Logger log = LoggerFactory.getLogger(CustomAuthenFilter.class);
+    private JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager manager;
 
     public CustomAuthenFilter(AuthenticationManager manager
@@ -36,19 +29,21 @@ public class CustomAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("User : ");
-        String userName = request.getParameter("userName");
-        String passWord = request.getParameter("passWord");
-        log.info("User : " + userName);
-        UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(userName, passWord);
-        return manager.authenticate(userToken);
+           String userName = request.getParameter("userName");
+           String passWord = request.getParameter("passWord");
+           UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(userName,passWord);
+           return manager.authenticate(userToken);
 
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
             jwtTokenProvider.generateTokenForClient(response,  authentication.getName());
-
+//            chain.doFilter(request,response);
+    }
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User name or password is incorrect!");
     }
 }
 

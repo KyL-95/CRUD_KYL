@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,17 +32,18 @@ public class RefreshTokenService implements IRefreshTokenService {
     @Override
     public RefreshToken createRefreshToken(String userName) {
         User user = userRepository.findByUserName(userName);
-        RefreshToken tokenDel = user.getRefreshToken();
-        if(tokenDel != null ) {
-            tokenDel.setToken(UUID.randomUUID().toString());
-            tokenDel.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
-            refreshTokenRepository.save(tokenDel);
-            return tokenDel;
+        RefreshToken tokenUpdate = user.getRefreshToken();
+        if(tokenUpdate != null ) {
+            tokenUpdate.setToken(UUID.randomUUID().toString());
+//            tokenUpdate.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+            tokenUpdate.setExpiryDate(new Timestamp(System.currentTimeMillis() + refreshTokenDurationMs));
+            refreshTokenRepository.save(tokenUpdate);
+            return tokenUpdate;
         }else{
             RefreshToken refreshToken = new RefreshToken();
 
             refreshToken.setUser(user);
-            refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+            refreshToken.setExpiryDate(new Timestamp(System.currentTimeMillis() + refreshTokenDurationMs));
             refreshToken.setToken(UUID.randomUUID().toString());
 
             refreshToken = refreshTokenRepository.save(refreshToken);
@@ -51,21 +53,16 @@ public class RefreshTokenService implements IRefreshTokenService {
 
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()  ) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken() + "...Refresh token was expired. Please make a new signin request");
+        Timestamp tokenExpiry = token.getExpiryDate();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (tokenExpiry.before(now)) {
+//            refreshTokenRepository.delete(token);
+            throw new TokenRefreshException(token.getToken() + " Refresh token has been expired. Please make a new sign-in request");
         }
-
 
         return token;
     }
 
 
 
-    @Override
-    @Transactional
-    public int deleteByUserName(String userName) {
-         return refreshTokenRepository.deleteByUser(userRepository.findByUserName(userName));
-
-    }
 }

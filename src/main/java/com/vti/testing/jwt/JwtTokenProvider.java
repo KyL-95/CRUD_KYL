@@ -46,19 +46,16 @@ public class JwtTokenProvider  {
 	private  final String PREFIX_TOKEN = "Bearer " ;
     public void generateTokenForClient(HttpServletResponse response, String userName) throws IOException {
     	log.info("User name là : " + userName);
-//		List<String> roles = userDetails.getAuthorities().stream()
-//				.map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-
 		List<String> roles = userRepository.findByUserName(userName).getRoles().stream()
 				.map(Role::getRoleName).collect(Collectors.toList());
-
-    	String accessToken = Jwts.builder()
-    			// Set roles of UserDetails in payload
-				.claim(CLAIM_NAME , roles)
-    			.setSubject(userName)
-    			.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-    			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-    			.compact();
+//    	String accessToken = Jwts.builder()
+//    			// Set roles of UserDetails in payload
+//				.claim(CLAIM_NAME , roles)
+//    			.setSubject(userName)
+//    			.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+//    			.signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+//    			.compact();
+		String accessToken = generateAccessToken(userName);
 		// init obj JwtResponse with accessToken & refreshToken
 		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userName);
 		JwtResponse jwtResponse = new JwtResponse(accessToken,refreshToken.getToken(),userName,roles);
@@ -70,7 +67,7 @@ public class JwtTokenProvider  {
 		response.setContentType("application/json;charset=UTF-8");
 		response.getWriter().write(json);
 	}
-    public String generateJwt(String userName){
+    public String generateAccessToken (String userName){
 		List<String> roles = userRepository.findByUserName(userName).getRoles().stream()
 				.map(Role::getRoleName).collect(Collectors.toList());
 		return Jwts.builder()
