@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 public class CustomAuthorFilter extends OncePerRequestFilter{
 	private final JwtTokenProvider jwtTokenProvider;
-
 	public CustomAuthorFilter(JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
@@ -30,7 +30,7 @@ public class CustomAuthorFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-			String authorHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+		String authorHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 			if(authorHeader != null && authorHeader.startsWith(jwtTokenProvider.getPREFIX_TOKEN())) {
 				String token = null;
 				try {
@@ -43,11 +43,11 @@ public class CustomAuthorFilter extends OncePerRequestFilter{
 							new UsernamePasswordAuthenticationToken(userName, null, authorities);
 					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 					filterChain.doFilter(request, response);
-				} catch (IllegalArgumentException e) {
-					log.error("JWT claims string is empty.");
 				} catch (ExpiredJwtException e) {
+					log.info("Token has been expired");
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Token has been expired");
 				} catch (MalformedJwtException e) {
+					log.info("Token has been invalid");
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Token has been invalid");
 				}
 			}
