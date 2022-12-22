@@ -1,6 +1,8 @@
 package com.vti.testing.jwt;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -10,15 +12,9 @@ public class JwtResponse {
     private String refreshToken ;
     private final String tokenType = "Bearer";
     private String userName;
-    private List<String> roles;
+    private Collection<? extends GrantedAuthority> roles;
 
-
-    public JwtResponse(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
-
-    public JwtResponse(String accessToken, String refreshToken, String userName,  List<String> roles) {
+    public JwtResponse(String accessToken, String refreshToken, String userName,  Collection<? extends GrantedAuthority> roles) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userName = userName;

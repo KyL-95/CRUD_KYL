@@ -21,9 +21,9 @@ public class RefreshTokenService implements IRefreshTokenService {
     @Autowired
     private  IRefreshTokenRepository refreshTokenRepository;
     @Autowired
-    private  IUserRepository userRepository; // bị null ????
-    @Value("${jwt.JWT_REFRESH_EXPIRATION}")
-    private Long refreshTokenDurationMs ; // 1 hour
+    private  IUserRepository userRepository;
+    @Value("${jwt.refreshExpiration}")
+    private Long refreshTokenDurationMs ;
     @Override
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
@@ -41,11 +41,9 @@ public class RefreshTokenService implements IRefreshTokenService {
             return tokenUpdate;
         }else{
             RefreshToken refreshToken = new RefreshToken();
-
             refreshToken.setUser(user);
             refreshToken.setExpiryDate(new Timestamp(System.currentTimeMillis() + refreshTokenDurationMs));
             refreshToken.setToken(UUID.randomUUID().toString());
-
             refreshToken = refreshTokenRepository.save(refreshToken);
             return refreshToken;
         }

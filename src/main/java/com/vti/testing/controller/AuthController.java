@@ -5,9 +5,7 @@ import com.vti.testing.entity.RefreshToken;
 import com.vti.testing.entity.User;
 import com.vti.testing.exception.custom_exception.PassWordUncorrectedEx;
 import com.vti.testing.exception.custom_exception.TokenRefreshException;
-import com.vti.testing.jwt.JwtTokenProvider;
-import com.vti.testing.jwt.TokenRefreshRequest;
-import com.vti.testing.jwt.TokenRefreshResponse;
+import com.vti.testing.jwt.*;
 import com.vti.testing.login.LoginInfo;
 import com.vti.testing.repository.IUserRepository;
 import com.vti.testing.service.UserDetailsResult;
@@ -15,14 +13,20 @@ import com.vti.testing.service.interfaces.IRefreshTokenService;
 import com.vti.testing.service.interfaces.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 @RestController
@@ -38,25 +42,17 @@ public class AuthController {
     @Autowired
     private IUserRepository userRepository;
     @Autowired
-    private ModelMapper modelMapper;
-
-    @PostMapping("/login-abc")
-    public void login(@RequestBody LoginInfo loginInfo, HttpServletResponse response) throws IOException {
+	private JwtProperties properties;
+    
+    @PostMapping("/authenticate")
+    public JwtResponse login(@RequestBody LoginInfo loginInfo) throws IOException {
         String userName = loginInfo.getUserName();
-       final UserDetails details = detailsService.loadUserByUsername(userName);
+        UserDetails details = detailsService.loadUserByUsername(userName);
         if(detailsService.checkPassWord(userName,loginInfo.getPassWord())){
-            jwtTokenProvider.generateTokenForClient(response,userName);
+           return  jwtTokenProvider.generateTokenForClient(details);
         } else{
             throw new PassWordUncorrectedEx("Pass word has uncorrected!");
         }
-    }
-    @GetMapping("/user/logging-user")
-//	@PreAuthorize("hasAnyRole('ADMIN')")  // Admin mới đc gọi API này
-    public UserDTO loginInfo(Principal principal) {
-        String loginUserName = principal.getName();
-        System.out.println("Logining in : " + loginUserName);
-        User entity = userService.getByUserName(loginUserName);
-        return modelMapper.map(entity, UserDTO.class);
     }
     @PostMapping("/user/refresh-token")
     public TokenRefreshResponse refreshToken(@RequestBody TokenRefreshRequest tokenRefreshRequest){
@@ -67,10 +63,11 @@ public class AuthController {
             refreshToken = refreshTokenService.verifyExpiration(refreshToken);
             // Get user from refreshToken
             User user = userRepository.findById(refreshToken.getUser().getUserId()).get();
-
-            String accessToken = jwtTokenProvider.generateAccessToken(user.getUserName());
+            UserDetails userDetails = detailsService.loadUserByUsername(user.getUserName());
+            String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
             return new TokenRefreshResponse(accessToken, refreshTokenFromRequest);
         }
-        throw new TokenRefreshException("This token is not in database");
+        throw new TokenRefreshException("This refresh-token is not in database or this user has been login in other place");
     }
+
 }

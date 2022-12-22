@@ -6,10 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @Setter
@@ -24,10 +22,11 @@ public class User implements Serializable {
 	private String userName;
 	private String passWord;
 	private String active;
-	@OneToOne(mappedBy = "user") //  ,fetch = FetchType.LAZY
+	@OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
 	private RefreshToken refreshToken;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
+			(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "user_role",
 			joinColumns = { @JoinColumn(name = "userId") },

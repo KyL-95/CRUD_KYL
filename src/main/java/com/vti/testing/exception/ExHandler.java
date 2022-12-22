@@ -46,14 +46,6 @@ public class ExHandler {
 
     }
 
-
-    // --------- JWT exception -----------
-//    @org.springframework.web.bind.annotation.ExceptionHandler
-//    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-//    public ExceptionResponse invalidJWTEX(ExpiredEX e) {
-//        return new ExceptionResponse("JWT is invalid", e.getMessage());
-//    }
-
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public ExceptionResponse expiredRefreshToken(TokenRefreshException e) {

@@ -26,7 +26,6 @@ public class UserDetailsResult implements UserDetailsService{
 		}
 		return new CustomUserDetails(user);
 	}
-
 	public boolean checkPassWord(String userName,String passWord){
 		User user = userRepository.findByUserName(userName);
 		return passwordEncoder.matches(passWord,user.getPassWord());

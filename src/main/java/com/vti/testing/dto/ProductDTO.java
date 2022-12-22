@@ -2,6 +2,7 @@ package com.vti.testing.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductDTO {
 
-	@JsonProperty("ID")
+//	@JsonProperty("ID")
 	private int productId;
-	@JsonProperty("Name")
+//	@JsonProperty("Name")
 	private String productName;
-	@JsonProperty("Price")
+//	@JsonProperty("Price")
 	private int productPrice;
 	private int categoryId;
 
@@ -23,5 +24,4 @@ public class ProductDTO {
 		this.productPrice = productPrice;
 		this.categoryId = categoryId;
 	}
-
 }

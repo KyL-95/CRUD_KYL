@@ -1,9 +1,7 @@
 package com.vti.testing.entity;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,11 +18,11 @@ public class Role implements Serializable {
     @Column(name = "roleId", nullable = false)
     private int roleId;
     private String roleName;
-    @ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "roles")
     private List<User> users = new ArrayList<User>();
 
     @Override
     public String toString() {
-        return  roleName ;
+        return roleName ;
     }
 }
