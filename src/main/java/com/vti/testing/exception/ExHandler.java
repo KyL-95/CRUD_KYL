@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExHandler {
-
-
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.ALREADY_REPORTED)
     public ExceptionResponse alreadyExistException(AlreadyExistEx e) {

@@ -27,4 +27,7 @@ public interface IUserService  {
 	Flux<Result> getUserNCC();
 	ResultsList getNccUsers() throws JsonProcessingException;
 
+	String addRoleUser(Integer userId,Integer roleId);
+	String removeRoleUser(Integer userId,Integer roleId);
+
 }

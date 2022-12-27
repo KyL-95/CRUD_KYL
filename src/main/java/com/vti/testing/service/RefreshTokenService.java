@@ -57,10 +57,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 //            refreshTokenRepository.delete(token);
             throw new TokenRefreshException(token.getToken() + " Refresh token has been expired. Please make a new sign-in request");
         }
-
         return token;
     }
-
-
 
 }

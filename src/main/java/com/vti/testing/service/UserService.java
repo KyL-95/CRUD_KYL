@@ -1,5 +1,6 @@
 package com.vti.testing.service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,15 +38,15 @@ import reactor.core.publisher.Flux;
 
 @Service
 @Getter
-@Scope("prototype")
+//@Scope("prototype")
 public class UserService implements IUserService {
-	private final String PASSWORD_PATTERN =
-			"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
-	private final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-	public boolean validatePassWord(String password) {
-		Matcher matcher = pattern.matcher(password);
-		return matcher.matches();
-	}
+//	private final String PASSWORD_PATTERN =
+//			"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
+//	private final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+//	public boolean validatePassWord(String password) {
+//		Matcher matcher = pattern.matcher(password);
+//		return matcher.matches();
+//	}
 
 	@Autowired
 	private IUserRepository userRepository;
@@ -71,9 +72,6 @@ public class UserService implements IUserService {
 		if(userRepository.existsByUserName(userName)){
 			throw new AlreadyExistEx("This user: " + userName + " has been used!");
 		}
-		if (!validatePassWord(passWord)){
-			throw new Exception("Password is not valid, please check your password");
-		}
 		// Encode passWord
 		String passEncode = passwordEncoder.encode(passWord);
 		newUser.setPassWord(passEncode);
@@ -88,8 +86,8 @@ public class UserService implements IUserService {
 	}
 	@Override
 	public List<UserDTO> getAllUsers() {
-		TypeMap<User,UserDTO> typeMap = modelMapper.createTypeMap(User.class, UserDTO.class);
-		typeMap.addMapping(User::getUserName, UserDTO::setUserName);
+//		TypeMap<User,UserDTO> typeMap = modelMapper.createTypeMap(User.class, UserDTO.class);
+//		typeMap.addMapping(User::getUserName, UserDTO::setUserName);
 
 		List<User> entityList = userRepository.findAll();
 		List<UserDTO> dtoList = modelMapper.map(entityList,new TypeToken<List<UserDTO>>(){}.getType());
@@ -115,6 +113,7 @@ public class UserService implements IUserService {
 
 	@Override
 	@Transactional
+	//			(noRollbackFor = ArithmeticException.class)
 	public String deleteUser(int id) {
 		if (userRepository.existsById(id)){
 			userRepository.deleteById(id);
@@ -174,5 +173,38 @@ public class UserService implements IUserService {
 		return result;
 	}
 
+	@Override
+	public String addRoleUser(Integer userId,Integer roleId) {
+		if(!userRepository.existsById(userId)){
+			return "This user is not in database";
+		}
+		User user = userRepository.findById(userId).get();
+		Role roleUpdate = roleRepository.findById(roleId).get();
+		List<Role> roles = user.getRoles();
+		if (roles.contains(roleUpdate)){
+			return "User has been this role";
+		}
+		roles.add(roleUpdate);
+		user.setRoles(roles);
+		userRepository.save(user);
+		return "Update successfully!";
+	}
+	@Override
+	public String removeRoleUser(Integer userId,Integer roleId) {
+		if(!userRepository.existsById(userId)){
+			return "This user is not in database";
+		}
+		User user = userRepository.findById(userId).get();
+		Role roleRemove = roleRepository.findById(roleId).get();
+		List<Role> roles = user.getRoles();
+		if (roles.contains(roleRemove)){
+			roles.remove(roleRemove);
+			user.setRoles(roles);
+			userRepository.save(user);
+			return "Remove successfully!";
+		}
+		return "User have not this role";
+
+	}
 
 }

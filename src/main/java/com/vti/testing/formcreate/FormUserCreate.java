@@ -13,7 +13,5 @@ import java.util.List;
 public class FormUserCreate {
 	private String userName;
 	private String passWord;
-//	private String active;
-//	private List<String> roles;
 
 }

@@ -17,6 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +34,9 @@ import java.util.Optional;
 @RestController
 public class AuthController {
     @Autowired
-    private UserDetailsResult detailsService;
+    private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private UserDetailsService detailsService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
@@ -48,8 +52,8 @@ public class AuthController {
     public JwtResponse login(@RequestBody LoginInfo loginInfo) throws IOException {
         String userName = loginInfo.getUserName();
         UserDetails details = detailsService.loadUserByUsername(userName);
-        if(detailsService.checkPassWord(userName,loginInfo.getPassWord())){
-           return  jwtTokenProvider.generateTokenForClient(details);
+        if (passwordEncoder.matches(loginInfo.getPassWord(),details.getPassword())){
+            return  jwtTokenProvider.generateTokenForClient(details);
         } else{
             throw new PassWordUncorrectedEx("Pass word has uncorrected!");
         }
@@ -61,7 +65,6 @@ public class AuthController {
         if(refreshTokenOptional.isPresent()) {
             RefreshToken refreshToken = refreshTokenOptional.get();
             refreshToken = refreshTokenService.verifyExpiration(refreshToken);
-            // Get user from refreshToken
             User user = userRepository.findById(refreshToken.getUser().getUserId()).get();
             UserDetails userDetails = detailsService.loadUserByUsername(user.getUserName());
             String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
