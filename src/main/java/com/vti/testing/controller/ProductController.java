@@ -1,6 +1,9 @@
 package com.vti.testing.controller;
 
 import com.vti.testing.dto.ProductDTO;
+import com.vti.testing.entity.IProductMaxPrice;
+import com.vti.testing.entity.IProductProjection;
+import com.vti.testing.entity.ProductMinPrice;
 import com.vti.testing.formcreate.FormProductCreate;
 import com.vti.testing.formupdate.FormProductUpdate;
 import com.vti.testing.service.interfaces.IProductService;
@@ -16,21 +19,30 @@ import java.util.List;
 public class ProductController {
 	@Autowired
 	private IProductService productService;
-
 	List<ProductDTO> dtos = null;
-
-
 	@GetMapping("/getAll")
 	public List<ProductDTO> getAllProducts() {
+		long startTime = System.currentTimeMillis();
 		dtos = productService.getAllProducts();
+		long endTime = System.currentTimeMillis();
+		long duration = endTime - startTime;
+		System.out.println("Time to get all  " + duration);
 		return dtos;
 
 	}
-
 	@GetMapping("/getById/{id}")
 	public ResponseEntity<?> getProductById(@PathVariable(name = "id") int productId) {
-		return productService.getProductById(productId);
+		long startTime = System.currentTimeMillis();
+		ResponseEntity<?> result = productService.getProductById(productId);
+		long endTime = System.currentTimeMillis();
+		long duration = endTime - startTime;
+		System.out.println("Time to get by id  " + duration);
+		return result;
 
+	}
+	@GetMapping("/findAll")
+	public List<IProductProjection> findAll(){
+		return productService.findAll();
 	}
 
 	@PutMapping("/update/{id}")
@@ -49,6 +61,13 @@ public class ProductController {
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable(name = "id") int productId){
 		return productService.deleteProduct(productId);
-		
+	}
+	@GetMapping("/getProductMinPrice")
+	public List<ProductMinPrice> getProductMinPrice(){
+		return productService.getProductMinPrice();
+	}
+	@GetMapping("/getProductMaxPrice")
+	public List<IProductMaxPrice> getProductMaxPrice() {
+		return productService.getProductMaxPrice();
 	}
 }

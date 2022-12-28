@@ -11,13 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
-    @Value("${jwt.JWT_SECRET}")
-    private String jwtSecret;
     @Autowired
     private IRoleService rolesService;
     @GetMapping("/getAll")
     public ResponseObj getAllRoles(){
-        System.out.println(jwtSecret);
         return rolesService.getAllRoles();
     }
 

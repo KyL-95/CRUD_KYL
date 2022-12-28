@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name="product")
+@AllArgsConstructor
 public class Product implements Serializable {
 	/**
 	 *
@@ -35,10 +37,10 @@ public class Product implements Serializable {
 	@Column(name = "productName",nullable = false, unique = true )
 	private String productName;
 		
-	@Column()
+	@Column
 	private int productPrice;
-	
-	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+
+	@ManyToOne
 	@JoinColumn(name= "categoryId")
 	private Category category;
 
@@ -47,8 +49,6 @@ public class Product implements Serializable {
 		this.productPrice = productPrice;
 		this.category = category;
 	}
-	
-
 
 //	@Override
 //	public String toString() {

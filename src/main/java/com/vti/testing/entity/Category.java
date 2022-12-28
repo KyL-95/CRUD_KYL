@@ -3,14 +3,7 @@ package com.vti.testing.entity;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,21 +25,14 @@ public class Category implements Serializable {
 	@Column
 	private int categoryId;
 	@Column(nullable = false, unique = true )
-	private String categoryName;
-	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL) 
+	private String categoryName; // fetch = FetchType.EAGER,
+	@OneToMany(fetch = FetchType.EAGER,mappedBy = "category",cascade = CascadeType.ALL)
 	private Set<Product> products;
-
-	public Category(int categoryId, String categoryName, Set<Product> products) {
-		this.categoryId = categoryId;
-		this.categoryName = categoryName;
-		this.products = products;
-	}
 
 	public Category(int categoryId, String categoryName) {
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;
 	}
-
 	@Override
 	public String toString() {
 		return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
